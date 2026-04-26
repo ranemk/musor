@@ -362,88 +362,6 @@ class DamageParser:
         return int(normalized)
 
 
-class TesseractOcr:
-    def __init__(self) -> None:
-        self.path = self._find_tesseract()
-
-    @staticmethod
-    def _find_tesseract() -> str | None:
-        configured = os.environ.get("TESSERACT_CMD")
-        if configured and Path(configured).exists():
-            return configured
-
-        found = shutil.which("tesseract")
-        if found:
-            return found
-
-        candidates = [
-            Path(r"C:\Program Files\Tesseract-OCR\tesseract.exe"),
-            Path(r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"),
-        ]
-        for candidate in candidates:
-            if candidate.exists():
-                return str(candidate)
-        return None
-
-    def available(self) -> bool:
-        return self.path is not None
-
-    def read(self, image: Image.Image) -> str:
-        if not self.path:
-            raise RuntimeError(
-                "Tesseract OCR was not found. Install Tesseract OCR with the Russian language pack, "
-                "or set TESSERACT_CMD to tesseract.exe."
-            )
-
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-            tmp_path = Path(tmp.name)
-
-        try:
-            self._preprocess(image).save(tmp_path)
-            result = subprocess.run(
-                [
-                    self.path,
-                    str(tmp_path),
-                    "stdout",
-                    "-l",
-                    "rus+eng",
-                    "--psm",
-                    "6",
-                ],
-                capture_output=True,
-                text=True,
-                timeout=8,
-                check=False,
-                creationflags=CREATE_NO_WINDOW,
-            )
-
-            if result.returncode != 0:
-                fallback = subprocess.run(
-                    [self.path, str(tmp_path), "stdout", "-l", "eng", "--psm", "6"],
-                    capture_output=True,
-                    text=True,
-                    timeout=8,
-                    check=False,
-                    creationflags=CREATE_NO_WINDOW,
-                )
-                if fallback.returncode == 0:
-                    return fallback.stdout
-                raise RuntimeError((result.stderr or fallback.stderr or "OCR failed").strip())
-
-            return result.stdout
-        finally:
-            tmp_path.unlink(missing_ok=True)
-
-    @staticmethod
-    def _preprocess(image: Image.Image) -> Image.Image:
-        image = image.convert("RGB")
-        scale = 3
-        image = image.resize((image.width * scale, image.height * scale), Image.Resampling.LANCZOS)
-        image = ImageEnhance.Contrast(image).enhance(1.8)
-        image = ImageEnhance.Sharpness(image).enhance(1.6)
-        return image
-
-
 class WindowsOcr:
     def __init__(self) -> None:
         self.path = shutil.which("powershell.exe") or str(Path(os.environ.get("SystemRoot", r"C:\Windows")) / "System32" / "WindowsPowerShell" / "v1.0" / "powershell.exe")
@@ -498,24 +416,17 @@ class WindowsOcr:
 
 class OcrReader:
     def __init__(self) -> None:
-        self.backends = [WindowsOcr(), TesseractOcr()]
+        self.backend = WindowsOcr()
         self.active_name = "none"
 
     def available(self) -> bool:
-        return any(backend.available() for backend in self.backends)
+        return self.backend.available()
 
     def read(self, image: Image.Image) -> str:
-        errors = []
-        for backend in self.backends:
-            if not backend.available():
-                continue
-            try:
-                self.active_name = backend.__class__.__name__.replace("Ocr", " OCR")
-                return backend.read(image)
-            except Exception as exc:  # noqa: BLE001 - fallback to the next OCR backend.
-                errors.append(f"{backend.__class__.__name__}: {exc}")
-
-        raise RuntimeError("No OCR backend succeeded. " + " | ".join(errors))
+        if not self.backend.available():
+            raise RuntimeError("Windows OCR is not available.")
+        self.active_name = "Windows OCR"
+        return self.backend.read(image)
 
 
 class DamageMeter:
@@ -948,7 +859,7 @@ class DamageMeter:
         if error:
             self.status.set(error)
         elif not self.ocr.available():
-            self.status.set("OCR missing: Windows OCR or Tesseract OCR is required.")
+            self.status.set("OCR missing: Windows OCR is required.")
         elif self.running and time.time() < self.baseline_until:
             remaining = max(0.0, self.baseline_until - time.time())
             self.status.set(f"Learning visible chat for {remaining:.1f}s...")
@@ -1935,9 +1846,9 @@ class DamageMeter:
             self._refresh_status()
             messagebox.showerror(
                 "OCR missing",
-                "No OCR backend was found.\n\nWindows OCR should work on Windows 10/11. "
-                "As a fallback, install Tesseract OCR with Russian language data, "
-                "or set TESSERACT_CMD to the full path of tesseract.exe.",
+                "Windows OCR was not found.\n\nThis app uses the native Windows OCR API through "
+                "PowerShell, so no external OCR installation is required. Make sure Windows OCR "
+                "language support is installed for the text you want to read.",
             )
             return
 

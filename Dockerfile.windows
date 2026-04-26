@@ -1,0 +1,18 @@
+# escape=`
+FROM python:3.12-windowsservercore-ltsc2022
+
+SHELL ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+WORKDIR C:\app
+
+COPY requirements-build.txt .\
+RUN python -m pip install --upgrade pip; `
+    python -m pip install --no-cache-dir -r requirements-build.txt
+
+COPY l2_damage_meter.py L2DamageMeter.spec win_ocr.ps1 README.md .\
+COPY assets .\assets
+COPY hooks .\hooks
+COPY tcl .\tcl
+
+RUN python -m PyInstaller --clean --noconfirm .\L2DamageMeter.spec
+
+CMD ["powershell", "-NoProfile", "-Command", "Get-ChildItem C:\\app\\dist"]

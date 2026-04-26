@@ -62,19 +62,42 @@ When you press **Start** or **Reset**, the currently visible chat is used as a b
 
 ## OCR Requirement
 
-This app needs Tesseract OCR installed on Windows, including Russian language data.
+This app uses the native Windows OCR API through `win_ocr.ps1`.
+No external OCR install is required.
 
-The app checks these locations automatically:
+If OCR does not read Russian text, install the Russian OCR/language feature in Windows language settings.
 
-```text
-C:\Program Files\Tesseract-OCR\tesseract.exe
-C:\Program Files (x86)\Tesseract-OCR\tesseract.exe
-```
+## Docker Build
 
-If Tesseract is somewhere else, set:
+This project builds a Windows `.exe`, so Docker must be switched to **Windows containers** first.
+Linux containers cannot build this exe with PyInstaller.
+
+Build the image:
 
 ```powershell
-$env:TESSERACT_CMD = 'C:\Path\To\tesseract.exe'
+docker build -f Dockerfile.windows -t parashaoly-build .
+```
+
+Copy the built exe out of the image:
+
+```powershell
+docker create --name parashaoly-out parashaoly-build
+New-Item -ItemType Directory -Force .\dist-docker
+docker cp parashaoly-out:"C:\app\dist\parashaoly.exe" ".\dist-docker\parashaoly.exe"
+docker rm parashaoly-out
+```
+
+The Docker-built exe will be at:
+
+```text
+dist-docker\parashaoly.exe
+```
+
+If Docker says the Windows base image cannot be found, switch Docker Desktop from Linux containers to Windows containers.
+If the Windows version does not match the base image, try running the build with Hyper-V isolation:
+
+```powershell
+docker build --isolation=hyperv -f Dockerfile.windows -t parashaoly-build .
 ```
 
 ## Notes

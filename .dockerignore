@@ -1,10 +1,11 @@
+.git/
+.repo-git/
 __pycache__/
 *.py[cod]
 
 build/
 dist/
 dist-docker/
-*.spec.bak
 
 l2_damage_meter_config.json
 last_chat_capture.png
@@ -12,4 +13,3 @@ last_ocr_text.txt
 assets/extracted_exe_icon.png
 
 tcl_test_copy_*/
-.repo-git/
