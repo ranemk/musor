@@ -1,7 +1,6 @@
 # parashaoly
 
 [![Build Windows exe](https://github.com/ranemk/musor/actions/workflows/build-windows.yml/badge.svg)](https://github.com/ranemk/musor/actions/workflows/build-windows.yml)
-[![Release Windows exe](https://github.com/ranemk/musor/actions/workflows/release-windows.yml/badge.svg)](https://github.com/ranemk/musor/actions/workflows/release-windows.yml)
 
 Build instructions for the Windows executable.
 
