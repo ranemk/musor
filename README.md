@@ -55,31 +55,3 @@ If the Windows version does not match the base image, try Hyper-V isolation:
 ```powershell
 docker build --isolation=hyperv -f Dockerfile.windows -t parashaoly-build .
 ```
-
-## GitHub Actions Build
-
-GitHub Actions builds the exe automatically on GitHub.
-
-Workflow file:
-
-```text
-.github\workflows\build-windows.yml
-```
-
-It runs when code is pushed to `main`, and it can also be started manually from the GitHub **Actions** tab.
-
-To download the exe:
-
-1. Open the repo on GitHub.
-2. Click **Actions**.
-3. Open **Build Windows exe**.
-4. Click the latest successful run.
-5. Download the **parashaoly-windows** artifact.
-
-To start a build manually:
-
-1. Open **Actions**.
-2. Click **Build Windows exe**.
-3. Click **Run workflow**.
-4. Choose `main`.
-5. Click **Run workflow** again.
