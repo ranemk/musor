@@ -1,5 +1,7 @@
 # parashaoly
 
+[![Build Windows exe](https://github.com/ranemk/musor/actions/workflows/build-windows.yml/badge.svg)](https://github.com/ranemk/musor/actions/workflows/build-windows.yml)
+
 Build instructions for the Windows executable.
 
 ## Local Windows Build
