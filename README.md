@@ -85,3 +85,5 @@ $env:TESSERACT_CMD = 'C:\Path\To\tesseract.exe'
 - It does not automate input.
 
 The latest captured chat crop is saved as `last_chat_capture.png`, which is useful for tuning OCR if recognition is poor.
+
+# musor
