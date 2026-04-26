@@ -6,6 +6,7 @@ __pycache__/
 build/
 dist/
 dist-docker/
+tcl/
 
 l2_damage_meter_config.json
 last_chat_capture.png

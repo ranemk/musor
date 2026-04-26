@@ -5,7 +5,7 @@ a = Analysis(
     ['l2_damage_meter.py'],
     pathex=[],
     binaries=[],
-    datas=[('assets', 'assets'), ('win_ocr.ps1', '.'), ('tcl', 'tcl')],
+    datas=[('assets', 'assets'), ('win_ocr.ps1', '.')],
     hiddenimports=['tkinter', '_tkinter', 'tkinter.messagebox'],
     hookspath=['hooks'],
     hooksconfig={},

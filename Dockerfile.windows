@@ -11,7 +11,6 @@ RUN python -m pip install --upgrade pip; `
 COPY l2_damage_meter.py L2DamageMeter.spec win_ocr.ps1 README.md .\
 COPY assets .\assets
 COPY hooks .\hooks
-COPY tcl .\tcl
 
 RUN python -m PyInstaller --clean --noconfirm .\L2DamageMeter.spec
 

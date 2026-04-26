@@ -4,6 +4,7 @@ __pycache__/
 build/
 dist/
 dist-docker/
+tcl/
 *.spec.bak
 
 l2_damage_meter_config.json
