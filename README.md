@@ -100,6 +100,39 @@ If the Windows version does not match the base image, try running the build with
 docker build --isolation=hyperv -f Dockerfile.windows -t parashaoly-build .
 ```
 
+## GitHub Actions Build
+
+GitHub Actions is GitHub's automatic builder.
+When code is pushed to the `main` branch, GitHub starts a temporary Windows machine, builds `parashaoly.exe`, and saves it as a downloadable artifact.
+
+This repo includes:
+
+```text
+.github\workflows\build-windows.yml
+```
+
+After pushing to GitHub:
+
+1. Open the repo on GitHub.
+2. Click the **Actions** tab.
+3. Open **Build Windows exe**.
+4. Click the latest run.
+5. Download the **parashaoly-windows** artifact.
+
+You can also start a build manually:
+
+1. Open **Actions**.
+2. Click **Build Windows exe**.
+3. Click **Run workflow**.
+4. Choose `main`.
+5. Click **Run workflow** again.
+
+The workflow does the same build command as local builds:
+
+```powershell
+python -m PyInstaller --clean --noconfirm .\L2DamageMeter.spec
+```
+
 ## Notes
 
 - This is passive screen capture only.
