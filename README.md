@@ -1,6 +1,7 @@
 # parashaoly
 
 [![Build Windows exe](https://github.com/ranemk/musor/actions/workflows/build-windows.yml/badge.svg)](https://github.com/ranemk/musor/actions/workflows/build-windows.yml)
+[![Release Windows exe](https://github.com/ranemk/musor/actions/workflows/release-windows.yml/badge.svg)](https://github.com/ranemk/musor/actions/workflows/release-windows.yml)
 
 Build instructions for the Windows executable.
 
@@ -82,4 +83,41 @@ To start a build manually:
 2. Click **Build Windows exe**.
 3. Click **Run workflow**.
 4. Choose `main`.
+5. Click **Run workflow** again.
+
+## GitHub Releases
+
+GitHub Releases creates a public download page with the exe under **Assets**.
+
+Workflow file:
+
+```text
+.github\workflows\release-windows.yml
+```
+
+Create a release by pushing a version tag:
+
+```powershell
+git --git-dir=.repo-git --work-tree=. tag v1.0.0
+git --git-dir=.repo-git --work-tree=. push origin v1.0.0
+```
+
+GitHub will build the exe and create a release like:
+
+```text
+https://github.com/ranemk/musor/releases/tag/v1.0.0
+```
+
+The release asset will be:
+
+```text
+parashaoly.exe
+```
+
+You can also create a release manually:
+
+1. Open **Actions**.
+2. Click **Release Windows exe**.
+3. Click **Run workflow**.
+4. Enter a tag like `v1.0.0`.
 5. Click **Run workflow** again.
